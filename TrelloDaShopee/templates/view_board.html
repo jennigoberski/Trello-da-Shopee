@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: url("/static/images/background.jpg") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        .top-menu {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .top-menu h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .board-container {
+            display: flex;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 0 0 auto;
+            width: 250px;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            background: linear-gradient(135deg, #FFB6C1, #FFDDC1, #FFABAB, #FFC3A0, #B9FBC0, #D6EAF8, #F9E79F);
+            background-size: 300% 300%;
+            animation: gradient 10s ease infinite;
+            color: #333;
+            position: relative;
+        }
+
+        .column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #8baadb;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .column-content {
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: #fff;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .card:hover {
+            background-color: #f0f0f0;
+        }
+
+        .card-title {
+            font-weight: bold;
+        }
+
+        .card-responsible {
+            color: #888;
+        }
+
+        .btn-custom {
+            background-color: #81c784;
+            color: #fff;
+            border: none;
+        }
+
+        .btn-custom:hover {
+            background-color: #81c784;
+        }
+
+        .btn-log-out {
+            background-color: #e57373;
+            color: #fff;
+        }
+
+        .btn-log-out:hover {
+            background-color: #e57373;
+        }
+
+        .btn-back {
+            background-color: #8baadb;
+            color: #fff;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
+            100% { background-position: 0% 0%; }
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .icon-button:hover {
+            color: #ffcccc;
+        }
+
+        .edit-form, .add-column-form, .create-card-form {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 500px;
+            z-index: 100;
+        }
+
+        .edit-form input[type="text"], .add-column-form input[type="text"], .create-card-form input[type="text"] {
+            width: calc(100% - 80px);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px;
+            margin-right: 5px;
+        }
+
+        .edit-form button, .add-column-form button, .create-card-form button {
+            background-color: #8baadb;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .edit-form button:hover, .add-column-form button:hover, .create-card-form button:hover {
+            background-color: #8baadb;
+        }
+
+        .modal-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffcccc;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .modal-close-btn:hover {
+            background: #ffcccc;
+        }
+
+        .snackbar {
+            visibility: hidden;
+            min-width: 250px;
+            margin-left: -125px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 2px;
+            position: fixed;
+            z-index: 1;
+            bottom: 30px;
+            left: 50%;
+            font-size: 17px;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2);
+            padding: 16px;
+        }
+
+        .snackbar.show {
+            visibility: visible;
+            -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+
+        @-webkit-keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @keyframes fadein {
+            from {bottom: 0; opacity: 0;}
+            to {bottom: 30px; opacity: 1;}
+        }
+
+        @-webkit-keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        @keyframes fadeout {
+            from {bottom: 30px; opacity: 1;}
+            to {bottom: 0; opacity: 0;}
+        }
+
+        .edit-form {
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .modal-body p {
+            margin: 0;
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-menu">
+        <div>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-back"><i class="fas fa-arrow-left"></i> Voltar</a>
+            <a href="{{ url_for('log_out') }}" class="btn btn-log-out"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        </div>
+        <h2>{{ board.name }}</h2>
+        <div>
+            <button class="btn btn-custom" onclick="toggleForm('move-card-form')">Mover Card</button>
+            <button class="btn btn-custom" onclick="toggleForm('edit-board-name-form')">Editar Nome do Quadro</button>
+            <button class="btn btn-custom" onclick="toggleForm('add-column-form')">Adicionar Coluna</button>
+            <button class="btn btn-custom" onclick="toggleForm('create-card-form')">Adicionar Card</button>
+        </div>
+    </div>
+
+    <div class="board-container">
+        {% for column in columns %}
+            <div class="column" id="column-{{ column.id }}" data-column-id="{{ column.id }}">
+                <div class="column-header">
+                    <span class="column-name">{{ column.name }}</span>
+                    <div>
+                        <button class="icon-button edit-icon" onclick="toggleForm('edit-form-{{ column.id }}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <form action="{{ url_for('delete_column', board_id=board.id, column_id=column.id) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="icon-button" title="Delete Column">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div class="column-content">
+                    {% for card in column_id_to_cards[column.id] %}
+                        <div class="card" onclick="showCardDetails({{ card.id }})">
+                            <div class="card-title">{{ card.title }}</div>
+                            <div class="card-responsible">
+                                {% if card.assigned_to %}
+                                    {{ card.assigned_to }}
+                                {% else %}
+                                    Unassigned
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div id="move-card-form" class="edit-form">
+        <button class="modal-close-btn" onclick="toggleForm('move-card-form')">&times;</button>
+        <form id="move-card-form-action" method="POST" action="{{ url_for('move_card') }}">
+            <div class="mb-3">
+                <label for="card_id" class="form-label">Selecionar Card</label>
+                <select name="card_id" class="form-select" id="card_id" required>
+                    <option value="">Selecionar Card a ser Movido</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="target_column_id" class="form-label">Selecione a Coluna de Destino</label>
+                <select name="target_column_id" class="form-select" id="target_column_id" required>
+                    <option value="">Selecionar Coluna</option>
+                    {% for column in board.columns %}
+                        <option value="{{ column.id }}">{{ column.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-custom">Mover Card</button>
+        </form>
+    </div>
+
+    <div id="create-card-form" class="edit-form">
+        <button class="modal-close-btn" onclick="toggleForm('create-card-form')">&times;</button>
+        <form action="{{ url_for('create_card') }}" method="POST">
+            <input type="hidden" name="board_id" value="{{ board.id }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">Título</label>
+                <input type="text" name="title" class="form-control" id="title" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Descrição</label>
+                <textarea name="description" class="form-control" id="description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="start_time" class="form-label">Data de Início</label>
+                <input type="datetime-local" name="start_time" class="form-control" id="start_time">
+            </div>
+            <div class="mb-3">
+                <label for="end_time" class="form-label">Data de Término</label>
+                <input type="datetime-local" name="end_time" class="form-control" id="end_time">
+            </div>
+            <div class="mb-3">
+                <label for="assigned_to" class="form-label">Responsável</label>
+                <select name="assigned_to" class="form-select" id="assigned_to">
+                    <option value="">Selecione Usuário</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+            <label for="column_id" class="form-label">Selecione a Coluna</label>
+            <select name="column_id" class="form-select" id="column_id" required>
+                <option value="">Selecione Coluna</option>
+                {% for column in board.columns %}
+                    <option value="{{ column.id }}">{{ column.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+            <button type="submit" class="btn btn-custom">Criar Card</button>
+        </form>
+    </div>
+
+    <div id="edit-board-name-form" class="edit-form">
+        <button class="modal-close-btn" onclick="toggleForm('edit-board-name-form')">&times;</button>
+        <form action="{{ url_for('edit_board_name', board_id=board.id) }}" method="POST">
+            <input type="text" name="name" value="{{ board.name }}" required>
+            <button type="submit">Salvar</button>
+        </form>
+    </div>
+
+    <div id="add-column-form" class="add-column-form">
+        <button class="modal-close-btn" onclick="toggleForm('add-column-form')">&times;</button>
+        <form action="{{ url_for('add_column', board_id=board.id) }}" method="POST">
+            <input type="text" name="column_name" placeholder="Nome da Nova Coluna" required>
+            <button type="submit">Adicionar Coluna</button>
+        </form>
+    </div>
+
+    <div id="snackbar"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <script>
+        function toggleForm(formId) {
+            const form = document.getElementById(formId);
+            if (form.style.display === "none" || form.style.display === "") {
+                form.style.display = "block";
+            } else {
+                form.style.display = "none";
+            }
+        }
+
+        function showCardDetails(cardId) {
+            console.log(`Card ID: ${cardId}`);
+            window.location.href = `/card/${cardId}`;
+        }
+
+        function populateCardDropdown() {
+            const cardDropdown = document.getElementById('card_id');
+            const boardId = {{ board.id }};
+
+            fetch(`/api/boards/${boardId}/card-titles`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na listagem dos títulos dos cards');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    cardDropdown.innerHTML = '<option value="">Select Card</option>';
+
+                    data.forEach(card => {
+                        const option = document.createElement('option');
+                        option.value = card.id;
+                        option.textContent = card.title;
+                        cardDropdown.appendChild(option);
+                    });
+                })
+
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const boardId = {{ board.id }};
+
+            fetch(`/api/boards/${boardId}/cards`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Acesso negado');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const cardTitlesList = document.getElementById('card-titles-list');
+
+                    cardTitlesList.innerHTML = '';
+
+                    data.forEach(card => {
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item';
+                        listItem.textContent = card.title;
+                        cardTitlesList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro na listagem dos cards:', error);
+                    const cardTitlesList = document.getElementById('card-titles-list');
+                    cardTitlesList.innerHTML = '<li class="list-group-item text-danger">Error fetching card titles.</li>';
+                });
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    var snackbar = document.getElementById("snackbar");
+                    snackbar.textContent = "{{ messages[0][1] }}";
+                    snackbar.className = "snackbar show";
+                    setTimeout(function() {
+                        snackbar.className = snackbar.className.replace("show", "");
+                    }, 3000);
+                {% endif %}
+            {% endwith %}
+        });
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const moveCardForm = document.getElementById('move-card-form');
+            const moveCardFormAction = document.getElementById('move-card-form-action');
+
+            if (moveCardForm && moveCardFormAction) {
+                moveCardForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+
+                    const formData = new FormData(moveCardFormAction);
+
+                    fetch(moveCardFormAction.action, {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            alert('Erro ao mover card.');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", populateCardDropdown);
+
+    </script>
+</body>
+</html>
