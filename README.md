@@ -12,18 +12,24 @@ Este projeto é uma versão simplificada do Trello, desenvolvido como parte da d
 
 ### Autenticação de Usuários
 - **Registrar**: Criação de uma nova conta de usuário.
+<img src="imagens/Captura de tela 2024-09-08 221110.png" alt="Exemplo de Quadro" width="500">
 - **Login**: Acesso à plataforma com credenciais previamente cadastradas.
+  <img src="imagens/Captura de tela 2024-09-08 221102.png" alt="Exemplo de Quadro" width="500">
 
 ### Interface Principal
 Na tela principal, o usuário tem acesso a três funcionalidades principais:
 
 - **Criar um Quadro**: O usuário pode criar um novo quadro, nomeá-lo e personalizá-lo com colunas e cartões.
 - **Listar Quadros**: Visualizar a lista de todos os quadros criados e pedir permissão para ingressar em quadros de outros usuários.
+ <img src="imagens/Captura de tela 2024-09-08 221024.png" alt="Exemplo de Quadro" width="500">
+imagens/Captura de tela 2024-09-08 221024.png
 - **Solicitações**: Exibe duas categorias de solicitações:
+<img src="imagens/Captura de tela 2024-09-08 221036.png" alt="Exemplo de Quadro" width="500">
   - Solicitações de ingresso em quadros feitas pelo usuário.
   - Solicitações de ingresso em quadros do próprio usuário, que ele pode aceitar ou rejeitar.
 
 ### Gerenciamento de Quadros
+<img src="imagens/Captura de tela 2024-09-08 221008.png" alt="Exemplo de Quadro" width="500">
 Ao criar um quadro, o usuário tem as seguintes opções:
 
 - **Adicionar Colunas**: Criar novas colunas dentro do quadro.
