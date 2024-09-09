@@ -22,7 +22,6 @@ Na tela principal, o usuário tem acesso a três funcionalidades principais:
 - **Criar um Quadro**: O usuário pode criar um novo quadro, nomeá-lo e personalizá-lo com colunas e cartões.
 - **Listar Quadros**: Visualizar a lista de todos os quadros criados e pedir permissão para ingressar em quadros de outros usuários.
  <img src="imagens/Captura de tela 2024-09-08 221024.png" alt="Exemplo de Quadro" width="500">
-imagens/Captura de tela 2024-09-08 221024.png
 - **Solicitações**: Exibe duas categorias de solicitações:
 <img src="imagens/Captura de tela 2024-09-08 221036.png" alt="Exemplo de Quadro" width="500">
   - Solicitações de ingresso em quadros feitas pelo usuário.
