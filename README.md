@@ -45,7 +45,7 @@ Ao criar um quadro, o usuário tem as seguintes opções:
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
+git clone https://github.com/jennigoberski/Trello-da-Shopee.git
 ```
   
 2. Instale as depêndencias:
